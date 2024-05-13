@@ -180,3 +180,171 @@ select isbn,title from book where isbn in(select isbn from author where author_c
 |  105 | Asur          |
 +------+---------------+
 3 rows in set (0.00 sec)
+
+Q.Consider Dept table
+DEPTNO 	DNAME	LOC
+
+Perform the following: 
+1. Rename the table dept as department
+ 2. Add a new column PINCODE with not null constraints to the existing table DEPT 
+3. All constraints and views that reference the column are dropped automatically, along with the column. 
+4. Rename the column DNAME to DEPT_NAME in dept table
+ 5. Change the data type of column loc as CHAR with size 10 
+6. Delete table
+
+mysql> create table dept(deptno int(10),dname varchar(10), loc varchar(10));
+Query OK, 0 rows affected, 1 warning (0.13 sec)
+
+1)mysql> alter table dept rename to department;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> describe department;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| deptno | int         | YES  |     | NULL    |       |
+| dname  | varchar(10) | YES  |     | NULL    |       |
+| loc    | varchar(10) | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+
+2)mysql> ALTER TABLE department ADD PINCODE INT NOT NULL;
+Query OK, 0 rows affected (0.06 sec)
+
+
+3)
+mysql> CREATE VIEW department_view AS
+    -> SELECT DEPTNO, DNAME, LOC,PINCODE FROM department;
+ mysql> DROP VIEW department_view;
+ Query OK, 0 rows affected (0.02 sec)
+
+4)mysql> ALTER TABLE department RENAME COLUMN DNAME TO DEPT_NAME;
+Query OK, 0 rows affected (0.03 sec)
+
+5)mysql> ALTER TABLE department modify LOC varchar(10);
+Query OK, 0 rows affected (0.03 sec)
+
+6)mysql> DROP TABLE department;
+Query OK, 0 rows affected (0.02 sec)
+
+Q.Consider Employee table
+ 
+Perform the following
+ 1. Display all the fields of employee table 
+2. Retrieve employee number and their salary 
+3. Retrieve average salary of all employee 
+4. Retrieve number of employee
+ 5. Retrieve distinct number of employee
+ 6. Retrieve total salary of employee group by employee name and count similar names
+ 7. Retrieve total salary of employee which is greater than >120000 
+8. Display name of employee in descending order 
+9. Display details of employee whose name is AMIT and salary greater than 50000;
+
+mysql> create table employee(empno varchar(10),emp_name varchar(20),dept varchar(10),salary int,doj date,branch varchar(20));
+
+mysql> insert into employee("E101","Amit","Production",45000,"12-Mar-00","Bangalore");
+mysql> insert into employee values("E101","Amit","Production",45000,"00-03-12","Bangalore");
+mysql> insert into employee values("E102","Amit","HR",70000,"02-07-03","Bang
+alore");
+
+mysql> insert into employee values("E103","sunita","Manager",120000,"01-01-11","mysore");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into employee values("E105","sunita","IT",67000,"01-08-11","my
+sore");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into employee values("E106","mahesh","civil",145000,"03-09-20"
+,"mumbai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from employee;
++-------+----------+------------+--------+------------+-----------+
+| empno | emp_name | dept       | salary | doj        | branch    |
++-------+----------+------------+--------+------------+-----------+
+| E101  | Amit     | Production |  45000 | 2000-03-12 | Bangalore |
+| E102  | Amit     | HR         |  70000 | 2002-07-03 | Bangalore |
+| E103  | sunita   | Manager    | 120000 | 2001-01-11 | mysore    |
+| E105  | sunita   | IT         |  67000 | 2001-08-11 | mysore    |
+| E106  | mahesh   | civil      | 145000 | 2003-09-20 | mumbai    |
++-------+----------+------------+--------+------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> select count(*) from emp_name;
+ERROR 1146 (42S02): Table 'practical.emp_name' doesn't exist
+mysql> select count(*) from employee;
++----------+
+| count(*) |
++----------+
+|        5 |
++----------+
+1 row in set (0.03 sec)
+
+mysql> select avg(salary) from employee;
++-------------+
+| avg(salary) |
++-------------+
+|  89400.0000 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT COUNT(*) AS total_employees FROM Employee;
++-----------------+
+| total_employees |
++-----------------+
+|               5 |
++-----------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT COUNT(DISTINCT emp_number) AS distinct_employees FROM Employee;
+ERROR 1054 (42S22): Unknown column 'emp_number' in 'field list'
+mysql> SELECT COUNT(DISTINCT emp_name) AS distinct_employees FROM Employee;
++--------------------+
+| distinct_employees |
++--------------------+
+|                  3 |
++--------------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT emp_name, SUM(salary) AS total_salary, COUNT(emp_name) AS name_count
+    -> FROM Employee
+    -> GROUP BY emp_name;
++----------+--------------+------------+
+| emp_name | total_salary | name_count |
++----------+--------------+------------+
+| Amit     |       115000 |          2 |
+| sunita   |       187000 |          2 |
+| mahesh   |       145000 |          1 |
++----------+--------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT SUM(salary) AS total_salary
+    -> FROM Employee
+    -> WHERE salary > 120000;
++--------------+
+| total_salary |
++--------------+
+|       145000 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT emp_name FROM Employee
+    -> ORDER BY emp_name DESC;
++----------+
+| emp_name |
++----------+
+| sunita   |
+| sunita   |
+| mahesh   |
+| Amit     |
+| Amit     |
++----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Employee
+    -> WHERE emp_name = 'AMIT' AND salary > 50000;
++-------+----------+------+--------+------------+-----------+
+| empno | emp_name | dept | salary | doj        | branch    |
++-------+----------+------+--------+------------+-----------+
+| E102  | Amit     | HR   |  70000 | 2002-07-03 | Bangalore |
++-------+----------+------+--------+------------+-----------+
+1 row in set (0.00 sec)
