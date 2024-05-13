@@ -1,0 +1,179 @@
+8)
+Aim: Design and develop MongoDB queries using CRUD operations. 
+Problem Statement: Design and Develop database using MongoDB Client- MongoDB  Data sever to Implement all basic CRUD operations and administration commands using two tier architecture. (Command Prompt)
+a.	Create a collection named Book. Add 5 documents in the collection with keys (book_isbn,title,punlisher_name,author(Name, Address, Phone No[landline, mobile]), publisher_city, price,copies)
+b.	Give details of Books whose Publisher lives in “Pune”.
+c.	Delete name Book from Book whose name start with “D”
+d.	Change the city of publisher “Pearson” to “Pune”.  
+Find the details of publisher named “Pearson”.
+
+test> db.book.insertOne({isbn:23,title:"Wings",pub_name:"Pearson",author:{name:"abdul",address:"pune",phone:{landline:234567890,mobile:23456789}},pub_city:"mumbai",price:340,copies:20})
+test> db.book.insertOne({isbn : 102, title : "TOC" , pub_name : "RSCOE", author : {name : "Vivek" , address : "Mumbai", phone : {landline : 234963, mob mob : 145532}}, pub_city : "Pune" , price : 200 , copy : 15 })
+test> db.book.insertOne({isbn : 103, title : "COA" , pub_name : "PCCOE", author : {name : "Raj" , address : "Pune", phone : {landline : 238863, mob : 145932}}, pub_city : "Mumbai" , price : 150 , copy : 20 })
+test> db.book.insertOne({isbn : 104, title : "CGA" , pub_name : "JSCOE", author : {name : "Vikram" , address : "Chennai", phone : {landline : 289663, momob : 145563}}, pub_city : "Delhi" , price : 600 , copy : 25 })
+test> db.book.insertOne({isbn : 105, title : "OS" , pub_name : "Pearson", author : {name : "Galvin" , address : "Delhi", phone : {landline : 288963, mobmob : 145563}}, pub_city : "Pune" , price : 200 , copy : 30 })
+test> db.book.find({pub_city:"Pune"})
+test> db.book.deleteMany({title:/^D/});
+
+test> db.Book.updateMany({ pub_name: "Pearson" }, { $set: { pub_city: "Pune" } });
+test> db.book.find({pub_name:"Pearson"})
+
+Q9Design and Implement any 5 query using MongoDB. 
+Problem Statement: With reference to Book collection in Assignment B-1 write MongoDB Queries for 
+(book_isbn,title,punlisher_name,author(Name, Address, Phone No[landline, mobile]), publisher_city, price,copies
+a.	Count the number of documents in the collection.
+b.	Arrange the documents in descending order of book_isbn.
+c.	Select Book Names whose title is ”DBMS” .
+d.	Update Book Copies as “10” whose Book Publisher is  “Tata MacGraw Hill”.
+
+
+test> db.book.countDocuments()
+test> db.book.find().sort({isbn:-1})
+test> db.book.find({title:"DBMS"});
+test> db.book.find({title:"Wings"});
+
+test> db.book.updateMany({pub_name:"abdul"},{$set:{copies:10}})
+test> db.book.updateMany({pub_name:"Pearson"},{$set:{copies:10}})
+
+Q10 Aim: Design and Implement any 5 query using MongoDB. 
+Problem Statement: With reference to Book collection in Assignment B-1 write MongoDB Queries for 
+(book_isbn,title,punlisher_name,author(Name, Address, Phone No[landline, mobile]), publisher_city, price,copies
+a.	Update Book Copies as “10” whose Book Publisher is  “Tata MacGraw Hill”.
+b.	Display name of publishers as per no of books published by them in ascending order.
+c.	Get publisher names who published at least one book written by author name like ‘K%’.
+d.	Delete the book  from Book table written by Author ‘Korth’. 
+
+i) test> db.book.updateMany({pub_name:"Pearson"},{$set:{copies:10}})
+
+ii)test> db.book.aggregate([{$group:{_id:"$pub_name",total_books:{$sum:1}}},{$sort:{totalbooks:1}}])
+iii) db.books.distinct("publisher_name", { "author.name": { $regex: /^K/i } })
+iv) db.books.deleteMany({ "author.name": "Korth" })
+
+11) Aim: Implement aggregation and indexing with suitable example using MongoDB 
+Problem statement: Create a collection named “ORDERS” that contain documents of the following prototype and solve the following queries:
+ {
+  cust_id: "abc123",
+  ord_date: new Date("Oct 04, 2012"),
+  status: 'A',
+  price: 50,
+  items: [ { sku: "xxx", qty: 25, price: 1 },
+           { sku: "yyy", qty: 25, price: 1 } ]
+        } 
+a.	Count all records from orders
+b.	Sum the price field from orders
+c.	For each unique cust_id, sum the price field.
+For each unique cust_id, sum the price field, results sorted by sum
+
+test> db.ORDERS.insertMany([
+   {
+     cust_id: "abc123",
+     ord_date: new Date("Oct 04, 2012"),
+     status: 'A',
+     price: 50,
+...     items: [
+...       { sku: "xxx", qty: 25, price: 1 },
+...       { sku: "yyy", qty: 25, price: 1 }
+...     ]
+...   },
+  // Add more documents as needed
+... ]);
+
+i)test> db.orders.count()
+
+ii)test> db.orders.createIndex({cust_id:1});
+iii)test> db.ORDERS.aggregate([
+...   { $group: { _id: null, total_price: { $sum: "$price" } } }
+... ]);
+iv)test> db.ORDERS.aggregate([ { $group: { _id: null, total_price: { $sum: "$price" } } }] );
+
+Q12Aim: Implement aggregation and indexing with suitable example using MongoDB 
+Problem statement: Create a collection named “ORDERS” that contain documents of the following prototype and solve the following queries:
+ {
+  cust_id: "abc123",
+  ord_date: new Date("Oct 04, 2012"),
+  status: 'A',
+  price: 50,
+  items: [ { sku: "xxx", qty: 25, price: 1 },
+           { sku: "yyy", qty: 25, price: 1 } ]
+}
+1.For each unique cust_id, sum the price field, results sorted by sum.
+2.For each unique cust_id, ord_date grouping, sum the price field.
+3.For cust_id with multiple records, return the cust_id and the corresponding record count.
+4.For each unique cust_id with status A, sum the price field.
+
+db.ORDERS.insertMany([
+...   {
+...     cust_id: "abc123",
+...     ord_date: new Date("Oct 04, 2012"),
+...     status: 'A',
+...     price: 50,
+...     items: [ { sku: "xxx", qty: 25, price: 1 },
+...              { sku: "yyy", qty: 25, price: 1 } ]
+...   },
+...   // Insert more documents as needed
+... ]);1
+1
+i)test> db.ORDERS.aggregate([
+...   {
+...     $group: {
+...       _id: "$cust_id",
+...       total_price: { $sum: "$price" }
+...     }
+...   },
+...
+...  { $sort: { total_price: 1 } }
+... ]);
+[ { _id: 'abc123', total_price: 100 } ]
+ii)test>
+
+test> // Query 2: For each unique cust_id, ord_date grouping, sum the price field.
+
+test> db.ORDERS.aggregate([
+...   {
+...     $group: {
+...       _id: { cust_id: "$cust_id", ord_date: "$ord_date" },
+...       total_price: { $sum: "$price" }
+...     }
+...   }
+... ]);
+
+
+test> // Query 3: For cust_id with multiple records, return the cust_id and the corresponding record count.
+
+test> db.ORDERS.aggregate([
+   {
+    $group: {
+      _id: "$cust_id",
+      count: { $sum: 1 }
+     }
+},
+  {
+    $match: {
+      count: { $gt: 1 }
+    }
+   }
+]);
+[ { _id: 'abc123', count: 2 } ]
+test>
+
+test> // Query 4: For each unique cust_id with status A, sum the price field.
+
+test> db.ORDERS.aggregate([
+   {
+     $match: { status: 'A' }
+   },
+   {
+     $group: {
+       _id: "$cust_id",
+       total_price: { $sum: "$price" }
+     }
+   }
+ ]);
+[ { _id: 'abc123', total_price: 100 } ]
+test> db.ORDERS.createIndex({ cust_id: 1 });
+cust_id_1
+test> db.ORDERS.createIndex({ status: 1 });
+status_1
+test>
+
+
