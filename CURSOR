@@ -1,0 +1,38 @@
+17) Given the table EMPLOYEE (EmpNo, Name, Salary, Designation, DeptID) write a cursor to select the five highest paid employees from the table. 
+EMPLOYEE (EmpNo, Name, Salary, Designation, DeptID)
+
+CREATE TABLE EMPLOYEE (
+    EmpNo NUMBER PRIMARY KEY,
+    Name VARCHAR2(255),
+    Salary NUMBER(10, 2),
+    Designation VARCHAR2(255),
+    DeptID NUMBER
+);
+INSERT INTO EMPLOYEE (EmpNo, Name, Salary, Designation, DeptID) VALUES (1, 'John', 80000, 'Manager', 101);
+INSERT INTO EMPLOYEE (EmpNo, Name, Salary, Designation, DeptID) VALUES (2, 'Alice', 75000, 'Lead Developer', 102);
+INSERT INTO EMPLOYEE (EmpNo, Name, Salary, Designation, DeptID) VALUES (3, 'Bob', 90000, 'Senior Manager', 101);
+INSERT INTO EMPLOYEE (EmpNo, Name, Salary, Designation, DeptID) VALUES (4, 'Emily', 85000, 'Senior Developer', 102);
+INSERT INTO EMPLOYEE (EmpNo, Name, Salary, Designation, DeptID) VALUES (5, 'David', 95000, 'Director', 103);
+DECLARE
+    CURSOR highestPaidCursor IS
+        SELECT EmpNo, Name, Salary, Designation, DeptID
+        FROM EMPLOYEE
+        ORDER BY Salary DESC
+        FETCH FIRST 5 ROWS ONLY;
+        
+    v_EmpNo EMPLOYEE.EmpNo%TYPE;
+    v_Name EMPLOYEE.Name%TYPE;
+    v_Salary EMPLOYEE.Salary%TYPE;
+    v_Designation EMPLOYEE.Designation%TYPE;
+    v_DeptID EMPLOYEE.DeptID%TYPE;
+BEGIN
+    OPEN highestPaidCursor;
+    LOOP
+        FETCH highestPaidCursor INTO v_EmpNo, v_Name, v_Salary, v_Designation, v_DeptID;
+        EXIT WHEN highestPaidCursor%NOTFOUND;
+        -- Output or process the fetched data
+        DBMS_OUTPUT.PUT_LINE('EmpNo: ' || v_EmpNo || ', Name: ' || v_Name || ', Salary: ' || v_Salary || ', Designation: ' || v_Designation || ', DeptID: ' || v_DeptID);
+    END LOOP;
+    CLOSE highestPaidCursor;
+END;
+/
