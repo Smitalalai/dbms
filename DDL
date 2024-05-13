@@ -1,0 +1,142 @@
+For the given Library database 
+BOOK (Book_ISBN [PK], Title[Not Null], Publisher_ Name, price[Check Price>0], Date_Of_Publication,Book_Copy ), 
+BOOK_AUTHORS (Book_ISBN [PK,FK]Author_Name [PK], Author_City) 
+Solve the following Assignments - 
+ 
+Aim: Design and Develop SQL DDL statements which demonstrate the use of SQL objects such as Table, View, Index, Sequence, Synonyms
+a)	Create tables BOOK & BOOK_AUTHORS with all constraints.(As per Library Database) 
+b)	Create view BOOK_AUTHOR_INFO consisting Book_ISBN, Title from BOOK Table and Author_Name from  BOOK_AUTHORS Table in ascending order of ISBN no.
+c)	Create an index on Book_Author on table on attribute “Author_Name”.
+d)	Create table Book_Auto_Increment (BookID int Auto_increament=100, Book Name) insert five records in table.
+            e)Create Synonyms for your Database (E.g. Library Database as LibDB) and view all
+
+mysql> create database practical;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use practical;
+Database changed
+mysql> create table book(isbn int PRIMARY KEY,title text(10) NOT NULL, pub_name text(10), price int CHECK(price>0), date_of_pub date, book_copy int);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> describe book;
++-------------+----------+------+-----+---------+-------+
+| Field       | Type     | Null | Key | Default | Extra |
++-------------+----------+------+-----+---------+-------+
+| isbn        | int(11)  | NO   | PRI | NULL    |       |
+| title       | tinytext | NO   |     | NULL    |       |
+| pub_name    | tinytext | YES  |     | NULL    |       |
+| price       | int(11)  | YES  |     | NULL    |       |
+| date_of_pub | date     | YES  |     | NULL    |       |
+| book_copy   | int(11)  | YES  |     | NULL    |       |
++-------------+----------+------+-----+---------+-------+
+6 rows in set (0.01 sec)
+
+mysql> insert into book values(101, 'Wings of Fire' , 'RSCOE' , 250, '2023-10-17' , 20);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into book values(102, 'The white tiger' , 'PCCOE' , 300, '2023-05-10' , 200);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into book values(103, 'Natsamrat' , 'CUMMINS' , 100, '2022-04-05' , 10);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into book values(104, 'Kashmir Files' , 'JSCOE' , 500, '2022-10-12' , 1000);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into book values(105, 'Asur' , 'RSCOE' , 150, '2022-09-09' , 75);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from book;
++------+-----------------+----------+-------+-------------+-----------+
+| isbn | title           | pub_name | price | date_of_pub | book_copy |
++------+-----------------+----------+-------+-------------+-----------+
+|  101 | Wings of Fire   | RSCOE    |   250 | 2023-10-17  |        20 |
+|  102 | The white tiger | PCCOE    |   300 | 2023-05-10  |       200 |
+|  103 | Natsamrat       | CUMMINS  |   100 | 2022-04-05  |        10 |
+|  104 | Kashmir Files   | JSCOE    |   500 | 2022-10-12  |      1000 |
+|  105 | Asur            | RSCOE    |   150 | 2022-09-09  |        75 |
++------+-----------------+----------+-------+-------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> create table author(isbn int references book(isbn), author_name text(10), author_city text(10), PRIMARY KEY(isbn));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into author values(101, 'Kalam ji' , 'Chennai' );
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into author values(102, 'Shyam' , 'Mumbai' );
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into author values(103, 'Radha' , 'Pune' );
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into author values(104, 'Akash' , 'Pune' );
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into author values(105, 'Karan' , 'Pune' );
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from author;
++------+-------------+-------------+
+| isbn | author_name | author_city |
++------+-------------+-------------+
+|  101 | Kalam ji    | Chennai     |
+|  102 | Shyam       | Mumbai      |
+|  103 | Radha       | Pune        |
+|  104 | Akash       | Pune        |
+|  105 | Karan       | Pune        |
++------+-------------+-------------+
+5 rows in set (0.00 sec)
+'decsribe author' at line 1
+mysql> describe author;
++-------------+----------+------+-----+---------+-------+
+| Field       | Type     | Null | Key | Default | Extra |
++-------------+----------+------+-----+---------+-------+
+| isbn        | int(11)  | NO   | PRI | NULL    |       |
+| author_name | tinytext | YES  |     | NULL    |       |
+| author_city | tinytext | YES  |     | NULL    |       |
++-------------+----------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+mysql> create view book_author_info as select book.isbn, book.title, author.author_name from book join author on book.isbn = author.isbn order by isbn asc;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from book_author_info;
++------+-----------------+-------------+
+| isbn | title           | author_name |
++------+-----------------+-------------+
+|  101 | Wings of Fire   | Kalam ji    |
+|  102 | The white tiger | Shyam       |
+|  103 | Natsamrat       | Radha       |
+|  104 | Kashmir Files   | Akash       |
+|  105 | Asur            | Karan       |
++------+-----------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> create index ind_author_name on author(author_name);
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table book_auto auto_increment = 100;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> insert into book_auto(name) values("OS");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into book_auto(name) values("CT");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into book_auto(name) values("DBMS");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from book_auto;
++--------+------+
+| bookid | name |
++--------+------+
+|    100 | OS   |
+|    101 | CT   |
+|    102 | DBMS |
++--------+------+
+3 rows in set (0.00 sec)
+
+
