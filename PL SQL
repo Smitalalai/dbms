@@ -121,3 +121,23 @@ BEGIN
 END;
 /
 
+Q13 ) Write a PL/SQL program to check whether a date falls on weekend i.e. SATURDAY or SUNDAY.
+
+
+DECLARE
+    v_input_date DATE := TO_DATE('2024-05-10', 'YYYY-MM-DD'); -- Change the date as needed
+    v_day_of_week VARCHAR2(9);
+BEGIN
+    -- Get the day of the week for the input date
+    SELECT TO_CHAR(v_input_date, 'Day') INTO v_day_of_week FROM DUAL;
+
+    -- Check if the day of the week is Saturday or Sunday
+    IF (v_day_of_week = 'Saturday' OR v_day_of_week = 'Sunday') THEN
+        DBMS_OUTPUT.PUT_LINE('The given date falls on a weekend.');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('The given date does not fall on a weekend.');
+    END IF;
+END;
+/
+
+
