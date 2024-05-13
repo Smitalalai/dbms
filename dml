@@ -1,0 +1,35 @@
+For the given Library database 
+BOOK (Book_ISBN [PK], Title[Not Null], Publisher_ Name, price[Check Price>0], Date_Of_Publication,Book_Copy ), 
+BOOK_AUTHORS (Book_ISBN [PK,FK]Author_Name [PK], Author_City) 
+Solve the following Assignments - 
+Aim: Design at least 10 SQL DML queries for suitable database applications using SQL DML statements: Insert, Select, Update, Delete with operators, functions and set operators.
+i)	Insert at least five records in each table.
+ii)	Select details of Books whose Author lives in “Pune”.
+iii)	Select Book Names from table Book whose copies are in between 10 to 15.
+iv)	Update Book Copies as “10” whose Book Publisher is  “Tata MacGraw Hill”.
+v)	Select the Name of Publisher who supplied maximum books.
+
+
+select book.* from book join author on book.isbn = author.isbn where author.author_city = "Pune";
++------+---------------+----------+-------+-------------+-----------+
+| isbn | title         | pub_name | price | date_of_pub | book_copy |
++------+---------------+----------+-------+-------------+-----------+
+|  103 | Natsamrat     | CUMMINS  |   100 | 2022-04-05  |        10 |
+|  104 | Kashmir Files | JSCOE    |   500 | 2022-10-12  |      1000 |
+|  105 | Asur          | RSCOE    |   150 | 2022-09-09  |        75 |
++------+---------------+----------+-------+-------------+-----------+
+mysql> select book.title from book where book_copy > 10 and book_copy<15;
++---------------+
+| title         |
++---------------+
+| Wings of Fire |
+| Natsamrat     |
+| Asur          |
++---------------+
+3 rows in set (0.00 sec)
+mysql> SELECT pub_name from book GROUP BY pub_name HAVING COUNT(*) = (SELECT MAX(BooksCount) FROM (SELECT pub_name, COUNT(*) AS BooksCount from book group by pub_name) as PublisherCounts);
++----------+
+| pub_name |
++----------+
+| RSCOE    |
++----------+
