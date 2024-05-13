@@ -1,0 +1,123 @@
+Write a PL/SQL block of code for the following requirements:- 
+Schema: 
+Borrower(Rollin, Name, DateofIssue, NameofBook, Status) 
+Fine(Roll_no, Date, Amt) 
+a.	Accept roll_no & name of book from user. 
+b.	Check the number of days (from date of issue), if days are between 15 to 30 then fine amount will be Rs 5per day. 
+c.	If no. of days>30, per day fine will be Rs 50 per day & for days less than 30, Rs. 5 per day. 
+d.	After submitting the book, status will change from I to R. 
+e.	If condition of fine is true, then details will be stored into fine table. 
+
+DECLARE
+    v_roll_no    NUMBER;
+    v_book_name  VARCHAR2(100);
+    v_date_of_issue DATE;
+    v_days_late  NUMBER;
+    v_fine_amt   NUMBER;
+BEGIN
+    -- Accept roll_no & name of book from user
+    v_roll_no := &roll_no; -- Assuming you'll input the roll number
+    v_book_name := '&book_name'; -- Assuming you'll input the name of the book
+
+    -- Fetching date of issue for the given book
+    SELECT DateofIssue
+    INTO v_date_of_issue
+    FROM Borrower
+    WHERE Rollin = v_roll_no
+    AND NameofBook = v_book_name;
+
+    -- Calculating the number of days late
+    v_days_late := TRUNC(SYSDATE - v_date_of_issue);
+
+    -- Calculating the fine amount based on the number of days late
+    IF v_days_late BETWEEN 15 AND 30 THEN
+        v_fine_amt := v_days_late * 5;
+    ELSIF v_days_late > 30 THEN
+        v_fine_amt := v_days_late * 50;
+    ELSE
+        v_fine_amt := 0; -- No fine if returned within 15 days
+    END IF;
+
+    -- Updating status of the book to 'R' (Returned)
+    UPDATE Borrower
+    SET Status = 'R'
+    WHERE Rollin = v_roll_no
+    AND NameofBook = v_book_name;
+
+    -- Storing details into fine table if fine is applicable
+    IF v_fine_amt > 0 THEN
+        INSERT INTO Fine (Roll_no, Date, Amt)
+        VALUES (v_roll_no, SYSDATE, v_fine_amt);
+        COMMIT;
+    END IF;
+
+    -- Displaying the fine amount
+    DBMS_OUTPUT.PUT_LINE('Fine amount: Rs. ' || v_fine_amt);
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Book not found for the given roll number.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+/Q6Write a PL/SQL block of code using parameterized Cursor
+Merge the data available in the newly created table N_RollCall with the data available in the table O_RollCall. If the data in the first table already exist in the second table then that data should be skipped.
+
+
+CREATE OR REPLACE PROCEDURE proc_Grade(
+    p_marks IN NUMBER
+) AS
+    v_category VARCHAR2(50);
+BEGIN
+    IF p_marks <= 1500 AND p_marks >= 990 THEN
+        v_category := 'Distinction';
+    ELSIF p_marks <= 989 AND p_marks >= 900 THEN
+        v_category := 'First Class';
+    ELSIF p_marks <= 899 AND p_marks >= 825 THEN
+        v_category := 'Higher Second Class';
+    ELSE
+        v_category := 'Other';
+    END IF;
+    
+    DBMS_OUTPUT.PUT_LINE('Student category: ' || v_category);
+END proc_DECLARE
+    v_marks NUMBER := 950; -- Assign the marks here
+BEGIN
+    proc_Grade(v_marks);
+END;
+/
+
+Q7.
+Write a PL/SQL block of Stored Procedure and Stored Function proc_Grade for following problem statement. 
+Write a Stored Procedure namely proc_Grade for the categorization of student. If marks scored by students in examination is <=1500 and marks>=990 then student will be placed in distinction category if marks scored are between 989 and 900 category is first class, if marks 899 and 825 category is Higher Second Class.
+
+
+
+
+CREATE OR REPLACE PROCEDURE proc_Grade(
+    p_marks IN NUMBER
+) AS
+    v_category VARCHAR2(50);
+BEGIN
+    IF p_marks <= 1500 AND p_marks >= 990 THEN
+        v_category := 'Distinction';
+    ELSIF p_marks <= 989 AND p_marks >= 900 THEN
+        v_category := 'First Class';
+    ELSIF p_marks <= 899 AND p_marks >= 825 THEN
+        v_category := 'Higher Second Class';
+    ELSE
+        v_category := 'Other';
+    END IF;
+    
+    DBMS_OUTPUT.PUT_LINE('Student category: ' || v_category);
+END proc_Grade;
+/
+  DECLARE
+    v_marks NUMBER := 950; -- Assign the marks here
+BEGIN
+    proc_Grade(v_marks);
+END;
+/
+
